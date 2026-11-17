@@ -1,0 +1,770 @@
+================================================================================
+                          SURVIVAL DOS GURI
+                    Roteiro de Game Design - v0.1
+                           (13/11/2026)
+================================================================================
+
+SUMÁRIO
+  1.  Visão geral
+  2.  História e fontes (domínio público)
+  3.  Loops de gameplay (micro / sessão / macro)
+  4.  Escalada do tempo - Fases da Praga
+  5.  Sistema de Temporadas e Reset
+  6.  Configuração de Servidores (opções ao criar)
+  7.  PvE sem wipe - Sistema de Corrupção Regional
+  8.  Balanceamento - Como lidar com jogadores muito fortes
+  9.  Tomada de casa, base e invasão
+  10. PvE x PvP
+  11. Monstros, status e fraquezas
+  12. Animais
+  13. Locomoção e escalada
+  14. Progressão - Habilidades por atividade
+  15. Vida, stamina e inventário com peso
+  16. Mapa e zonas de loot
+  17. Mercador
+  18. Crafting
+  19. Airdrops
+  20. Resumo do loop principal
+  21. Pendências / próximos passos
+
+
+================================================================================
+1. VISÃO GERAL
+================================================================================
+
+Gênero ........ Survival / construção de base / horror
+Câmera ........ Primeira pessoa (terceira pessoa como opção futura)
+Modos ......... PvP, PvE, Hardcore, servidores públicos e privados
+Referências ... Conan Exiles (survival + base), Valheim / New World
+                (XP por atividade), Minecraft (inventário em grid)
+Tema .......... Zumbis + criaturas do folclore e dos contos dos Irmãos Grimm
+
+Pilares:
+  - Tensão constante: barulho, luz e cheiro atraem ameaças.
+  - Risco = recompensa: zonas mais perigosas têm loot melhor.
+  - O mundo piora com o tempo (Fases da Praga).
+  - Conhecimento é poder: descobrir fraquezas dos monstros importa.
+  - Temporadas com começo, meio e um fim épico (Noite Final).
+
+
+================================================================================
+2. HISTÓRIA E FONTES (DOMÍNIO PÚBLICO)
+================================================================================
+
+ATENÇÃO LEGAL: "Supernatural" (série) tem direitos autorais. NÃO usar
+personagens, nomes ou mitologia própria da série. Usar apenas o FOLCLORE
+em que ela se inspira (domínio público). Para os Grimm, usar os textos
+originais, não as versões da Disney.
+
+Fontes:
+  - Herbert West - Reanimator (Lovecraft, 1922)
+      Origem dos zumbis: o "soro de reanimação". Diários de laboratório.
+  - Frankenstein (Mary Shelley)
+      Abominações costuradas. Chefe de laboratório.
+  - Drácula (Bram Stoker) / Carmilla (Le Fanu)
+      Vampiros: fraqueza a prata, fogo, luz, estaca.
+  - A Máscara da Morte Rubra (Edgar Allan Poe)
+      A praga; mansão isolada como dungeon.
+  - Irmãos Grimm
+      * Hansel e Gretel - a Bruxa e a Casa de Doces (base-chefe)
+      * Chapeuzinho Vermelho - o Lobo (lobisomem)
+      * O Flautista de Hamelin - controla ratos e crianças-zumbi
+      * Rumpelstiltskin - mercador sombrio que cobra "favores"
+      * O Junípero - árvore amaldiçoada
+  - Folclore geral
+      Wendigo, banshee, ghoul, draugr/revenant, lobisomem, golem,
+      Baba Yaga.
+  - Livro de Jó (cap. 41) / mitologia antiga
+      O Leviatã: a besta primordial do abismo. Base dos Leviatãs do
+      jogo (seção 11.2). Só a ideia bíblica/mitológica é usada - nada
+      da versão de Supernatural.
+  - Folclore brasileiro (diferencial)
+      Mula-sem-cabeça, Corpo-seco, Curupira, Mapinguari, Boitatá,
+      Cuca, Iara, Saci, Bicho-papão. (Detalhes na seção 11.1)
+
+PREMISSA:
+  O soro do Dr. West contaminou o mundo e "acordou" as lendas antigas.
+  Os monstros dos contos sempre existiram - a praga os trouxe de volta.
+  Isso justifica zumbis e criaturas de conto de fadas no mesmo mapa.
+
+
+================================================================================
+3. LOOPS DE GAMEPLAY
+================================================================================
+
+3.1 MICRO-LOOP (30s a 2min) - o que o jogador faz o tempo todo
+  Explorar -> Detectar ameaça -> Decidir (lutar / fugir / esgueirar)
+  -> Saquear -> Gerenciar peso e stamina
+
+  - Melee: silencioso, gasta stamina.
+  - Arma de fogo: forte, mas faz barulho e atrai mais inimigos.
+  - Essa tensão é a base de tudo.
+
+3.2 LOOP DE SESSÃO (30 a 90min) - ciclo dia/noite
+  DIA:   sair da base -> farmar/explorar -> coletar -> voltar antes de
+         escurecer. Zumbis lentos, farming mais seguro.
+  NOITE: defender a base de hordas OU arriscar incursão noturna.
+         Vampiros, lobisomens e wendigos caçam. Loot raro só à noite
+         (plantas lunares, drops de monstros noturnos).
+
+3.3 MACRO-LOOP (dias/semanas - uma temporada)
+  Sobreviver -> Tomar casa -> Fortificar -> Desbloquear crafting ->
+  Explorar zonas perigosas -> Enfrentar chefes de lenda ->
+  Mundo escala -> repetir em nível maior -> Noite Final -> Nova temporada
+
+
+================================================================================
+4. ESCALADA DO TEMPO - FASES DA PRAGA
+================================================================================
+
+  FASE            DIAS     MUDANÇAS
+  --------------  -------  ------------------------------------------------
+  1. Surto        1-7      Zumbis comuns e lentos. Loot abundante.
+  2. Mutação      8-15     Zumbis corredores e cuspidores. Animais começam
+                           a se transformar. Primeiras hordas noturnas.
+  3. Despertar    16-30    Criaturas folclóricas (lobisomem, banshee,
+                           ghoul). Loot residencial escasso -> empurra
+                           para zonas de risco.
+  4. Lenda        31+      Chefes dos contos (Bruxa, Flautista, Fera
+                           Costurada). Neblina do pântano se espalha.
+                           Lua de Sangue semanal (raid PvE massivo).
+
+  Opcional: escala por região - áreas com muitas mortes ficam
+  "corrompidas" e ganham monstros mais fortes (ver seção 7).
+
+
+================================================================================
+5. SISTEMA DE TEMPORADAS E RESET  ("TEMPORADAS DA PRAGA")
+================================================================================
+
+5.1 MODELOS DE RESET (comparação)
+  - Wipe total:      apaga tudo. Justo para PvP, mas desanima casuais.
+  - Só loot:         mantém bases/personagem. PERIGOSO para PvP - clã
+                     dominante, novatos desistem, servidor morre.
+  - Híbrido/temporada (ESCOLHIDO): apaga o mundo, mantém progressão de
+                     conta limitada (conhecimento e cosméticos).
+
+5.2 DURAÇÃO
+  Cada temporada dura de 6 a 10 semanas e percorre as Fases da Praga.
+
+5.3 LINHA DO TEMPO (exemplo de 8 semanas)
+  Sem 1      Surto        Todos iguais, corrida por casas boas.
+  Sem 2-3    Mutação      Primeiras raids, clãs se formam.
+  Sem 4-5    Despertar    Zonas de lenda abrem, recompensas ativas.
+  Sem 6-7    Lenda        Chefes, airdrops tier máximo, guerras de clã.
+  Sem 8      Noite Final  Evento global, ranking, troféus -> WIPE.
+
+5.4 A NOITE FINAL (encerramento da temporada)
+  - Na última semana, a Lua de Sangue fica permanente.
+  - Chefes de lenda andam livres pelo mapa.
+  - Objetivos globais (ex.: selar o laboratório do Dr. West, matar a
+    Bruxa).
+  - O mundo "cai": na história, a praga venceu e começa um novo ciclo /
+    nova região.
+  - O wipe vira o CLÍMAX, não um botão de desligar.
+
+5.5 O QUE É APAGADO x O QUE FICA
+  APAGADO (wipe)                    MANTIDO (conta)
+  --------------------------------  ---------------------------------------
+  Bases e casas tomadas             Bestiário (fraquezas descobertas)
+  Inventário, armas, recursos       Receitas de lore lidas (sem materiais)
+  Animais domados                   Cosméticos (skins, troféus, decoração)
+  Níveis de habilidade              Talentos de Legado (poucos, horizontais)
+
+  REGRA DE OURO: o que fica dá CONHECIMENTO e OPÇÃO, nunca PODER BRUTO.
+
+  Talentos de Legado (exemplos):
+    - Começar com um cão em vez de uma faca.
+    - Ver ervas raras destacadas.
+    - Escolher a região de spawn inicial.
+  Nenhum muda o resultado de um combate.
+
+5.6 RANKING DE FIM DE TEMPORADA
+  Recompensas: cosméticos e títulos.
+  Categorias: "Sobreviveu à Noite Final", "Matou a Bruxa", "Maior base",
+  "Mais dias vivo" (hardcore), etc.
+
+
+================================================================================
+6. CONFIGURAÇÃO DE SERVIDORES (OPÇÕES AO CRIAR)
+================================================================================
+
+Ao criar um servidor, o dono marca as opções abaixo. Servidores oficiais
+usam presets; servidores privados podem customizar tudo.
+
+6.1 OPÇÕES (marcar ao criar)
+
+  [ MODO DE JOGO ]  (escolher um)
+    ( ) Só PvP
+    ( ) Só PvE
+    ( ) PvP + PvE (zonas seguras PvE perto do mercador, PvP no resto)
+
+  [ HARDCORE ]  (funciona em qualquer modo)
+    [ ] Ativado - morreu, perdeu o personagem.
+                  Ranking por dias sobrevividos.
+
+  [ ACESSO ]
+    ( ) Público
+    ( ) Privado (senha / lista de convidados)
+
+  [ TIPO DE RESET ]  (escolher um)
+    ( ) Temporada com wipe completo + Legado de conta
+    ( ) Sem wipe + Corrupção Regional (ver seção 7)
+    ( ) Manual (dono do servidor decide quando resetar)
+
+  [ DURAÇÃO DA TEMPORADA ]  (se reset por temporada)
+    ( ) 6 semanas   ( ) 8 semanas   ( ) 10 semanas   ( ) Personalizado
+
+  [ EVENTO NOITE FINAL ]
+    [ ] Ativado
+
+  [ RAID PvP ]  (se tiver PvP)
+    ( ) Raid livre (24h)
+    ( ) Janelas de raid em horário fixo
+    ( ) Proteção offline com "Selo" (consome recurso)
+
+  [ BALANCEAMENTO - seção 8 ]  (cada um liga/desliga)
+    [ ] Poder que decai (durabilidade real, itens consumíveis)
+    [ ] Manutenção de base
+    [ ] Nível de Ameaça (mundo escala com o poder)
+    [ ] Recompensas pela cabeça (bounty)
+    [ ] Recuperação para quem entra atrasado (catch-up)
+    [ ] Retornos decrescentes nas habilidades
+
+  [ MULTIPLICADORES ]  (privado)
+    XP, taxa de loot, velocidade das Fases, tamanho das hordas,
+    duração do dia/noite.
+
+6.2 PRESETS OFICIAIS SUGERIDOS
+  - Oficial PvP .......... Só PvP / Público / Temporada com wipe /
+                           8 semanas / Noite Final / tudo da seção 8 ON
+  - Oficial PvE .......... Só PvE / Público / Sem wipe + Corrupção /
+                           seção 8 ON (exceto bounty)
+  - Oficial PvP+PvE ...... PvP + PvE / Público / Temporada com wipe
+  - Hardcore PvP ......... Só PvP / Hardcore ON / Temporada
+  - Hardcore PvE ......... Só PvE / Hardcore ON / Corrupção
+  - Privado .............. Tudo configurável pelo dono
+
+
+================================================================================
+7. PvE SEM WIPE - SISTEMA DE CORRUPÇÃO REGIONAL
+================================================================================
+
+  O mapa é dividido em regiões que se corrompem com o tempo.
+
+  - Corrupção sobe com: saque excessivo, mortes (jogadores e NPCs),
+    estruturas abandonadas, tempo sem presença de jogadores.
+  - Ao chegar a 100%, a região é TOMADA PELA PRAGA:
+      * estruturas abandonadas desmoronam;
+      * o loot reaparece;
+      * os monstros sobem de tier.
+  - Jogadores podem PURIFICAR a região (conteúdo de grupo: destruir
+    ninhos, matar chefe regional, acender fogueiras sagradas, etc.).
+  - Resultado: o mundo se renova sem apagar o progresso de ninguém.
+
+
+================================================================================
+8. BALANCEAMENTO - COMO LIDAR COM JOGADORES MUITO FORTES
+================================================================================
+
+  (Todas as camadas aprovadas. Cada uma pode ser ligada/desligada na
+   configuração do servidor.)
+
+8.A PODER QUE DECAI (sumidouro de itens)
+  - Armas com durabilidade real: cada reparo reduz a durabilidade
+    máxima, até quebrar de vez.
+  - Munição de prata e itens de lenda são consumíveis.
+  - Comida e remédios apodrecem.
+  - O veterano precisa jogar para MANTER o poder, não só acumular.
+
+8.B MANUTENÇÃO DE BASE
+  - Bases grandes custam recursos por dia (combustível do gerador,
+    reparos).
+  - Base grande = mais barulho e luz = atrai mais horda.
+  - Quem cresce demais vira alvo do PvE automaticamente.
+
+8.C NÍVEL DE AMEAÇA (o mundo escala com o poder)
+  - Calculado por jogador/clã: equipamento + tamanho da base + abates.
+  - Ameaça alta gera CAÇADORES: lobisomens rastreadores, banshee que
+    anuncia a posição do jogador.
+  - Novatos ficam em paz; os fortes são testados.
+
+8.D RECOMPENSAS PELA CABEÇA (PvP)
+  - Quem mata muito ganha bounty, visível no mapa por alguns minutos.
+  - Derrotar quem tem bounty paga bem -> novatos se unem contra o líder.
+
+8.E RECUPERAÇÃO PARA QUEM ENTRA ATRASADO (catch-up)
+  - XP de atividade acelerado até alcançar a média do servidor.
+  - Zona de proteção para novatos nas primeiras horas (sem PvP; o PvE
+    continua).
+  - Mercador vende "kits de reconstrução" mais baratos para quem teve a
+    base destruída.
+
+8.F RETORNOS DECRESCENTES
+  - Habilidades sobem rápido até ~70%, depois ficam bem lentas.
+  - Diferença entre jogador médio e veterano: ~15-20%, não 300%.
+  - A habilidade de quem joga continua decidindo a luta.
+
+
+================================================================================
+9. TOMADA DE CASA, BASE E INVASÃO
+================================================================================
+
+  1. ENCONTRAR uma casa (cada uma tem tamanho, porão e entradas
+     diferentes).
+  2. LIMPAR a casa (zumbis, às vezes um "residente" amaldiçoado).
+  3. REIVINDICAR com o item craftável "Marco de Abrigo".
+  4. FORTIFICAR: tábuas nas janelas, portas reforçadas, armadilhas,
+     cercas, geradores.
+  5. DEFENDER:
+     - PvE: hordas atraídas por BARULHO, LUZ e CHEIRO (comida
+       cozinhando, sangue). Ex.: deixo a luz acesa para craftar?
+     - PvP: jogadores invadem para roubar (regras de raid configuráveis
+       no servidor - ver seção 6).
+  6. EVOLUIR: casa -> casa fortificada -> complexo murado -> posto
+     avançado com torre.
+
+  Casas de lore: ex. a Casa de Doces da Bruxa (Hansel e Gretel) - base
+  premium com chefe dentro. Quem vence o chefe pode tomar a casa.
+
+
+================================================================================
+10. PvE x PvP
+================================================================================
+
+  PvE (cooperativo)
+  - Missões de lore: diários do Dr. West e páginas do "livro dos contos"
+    revelam as fraquezas dos monstros (desbloqueia no bestiário).
+  - Caçadas a chefes de lenda.
+  - Defesa de base contra a Lua de Sangue.
+
+  PvP
+  - Airdrops (ver seção 19).
+  - Zonas militares: loot alto-tier e PvP sempre ativo.
+  - Raids em bases de outros jogadores.
+  - Facções; zonas seguras PvE perto do mercador (modo misto).
+
+  Interação: tiros durante PvP atraem monstros para os dois lados ->
+  emboscadas e alianças temporárias.
+
+
+================================================================================
+11. MONSTROS, STATUS E FRAQUEZAS
+================================================================================
+
+  STATUS DAS ARMAS:
+  Sangramento, Veneno, Perfuração, Fogo, Prata, Sagrado,
+  Impacto (atordoar), Gelo.
+
+  DANO LOCALIZADO: cabeça, tronco, membros. Tiro nas pernas faz qualquer
+  criatura rastejar.
+
+  CRIATURA              FRAQUEZA                RESISTÊNCIA     MECÂNICA
+  --------------------  ----------------------  --------------  -----------------------------
+  Zumbi comum           Dano na cabeça          Sangramento     Só morre com headshot;
+                        (tiro ou melee)                         fora isso, rasteja
+  Zumbi inchado         Perfuração à distância  Melee           Explode gás venenoso
+                                                                se morto de perto
+  Ghoul                 Fogo                    Veneno          Come cadáveres e fica
+                                                                mais forte
+  Vampiro               Prata, Sagrado, sol     Arma comum      Precisa de estaca para morrer
+                                                                de vez; senão regenera
+  Lobisomem             Prata                   Impacto         Mais forte na lua cheia
+  Wendigo               Fogo                    Gelo,           Imita vozes de jogadores
+                                                Sangramento
+  Banshee               Sagrado                 Física          Grito drena stamina
+  Fera costurada        Fogo + elétrico         Perfuração      Chefe de laboratório
+  Ratos do Flautista    Fogo em área, veneno    -               Enxame que segue o Flautista
+  Animal transformado   Depende da espécie      -               Ver seção 12
+  Mula-sem-cabeça       Sangramento; ação       Fogo            Cavalo infectado transformado.
+                        especial "arrancar o                    Rastro de fogo, muito rápida.
+                        freio de ferro"                         Tirar o freio quebra a
+                                                                maldição (morte instantânea)
+  Corpo-seco            (a definir)             (a definir)     Folclore BR
+
+  CHEFES DE LENDA (Fase 4 / Noite Final):
+  A Bruxa (Casa de Doces), O Flautista, A Fera Costurada, O Mapinguari,
+  O Boitatá, O Grande Leviatã (chefe mundial - seção 11.2),
+  (outros a definir).
+
+
+11.1 CRIATURAS DO FOLCLORE BRASILEIRO
+--------------------------------------------------------------------------------
+
+  CURUPIRA - Guardião da floresta
+    Zona ........ Floresta
+    Papel ....... Punidor do excesso de coleta / caça
+    Mecânica:
+      - Cada região de floresta tem um "medidor de ofensa": sobe ao
+        cortar árvores demais, caçar demais ou queimar mata.
+      - Medidor alto -> o Curupira aparece e caça o responsável.
+      - Pés virados para trás: as pegadas dele apontam para o lado
+        errado. Rastrear o Curupira leva o jogador para longe/armadilhas.
+      - Faz o jogador "se perder": bússola e mapa ficam instáveis
+        enquanto ele está por perto.
+      - Liga com o sistema de Corrupção (seção 7) e com o farming:
+        coletar com moderação (ou replantar) mantém o Curupira calmo.
+    Fraqueza .... Não pode ser morto de forma permanente (é a mata).
+                  Pode ser AFASTADO com oferenda (fumo / cachaça
+                  craftáveis) ou replantando a área.
+    Resistência . Perfuração, Sangramento.
+    Recompensa .. Acalmar o Curupira dá bônus temporário de coleta e
+                  caça naquela região.
+
+  MAPINGUARI - Gigante da mata fechada (CHEFE)
+    Zona ........ Floresta profunda (Fase 3+)
+    Papel ....... Chefe de lenda da floresta
+    Mecânica:
+      - Gigante peludo com um olho só e uma boca enorme na barriga.
+      - Pele/couraça imune a balas comuns pela frente e pelas costas.
+      - Ponto fraco: A BOCA NA BARRIGA (abre ao rugir ou ao atacar).
+      - Rugido drena stamina e assusta animais (cavalo pode derrubar o
+        jogador).
+      - Fedor: área de veneno ao redor dele.
+    Fraqueza .... Dano na boca da barriga (qualquer tipo), Fogo.
+    Resistência . Perfuração e Impacto no resto do corpo, Veneno.
+    Drop ........ Couro de Mapinguari (armadura pesada top), troféu.
+
+  BOITATÁ - Serpente de fogo (CHEFE / evento)
+    Zona ........ Pântano e campos abertos, à noite
+    Papel ....... Chefe de lenda + ameaça ambiental
+    Mecânica:
+      - Aparece primeiro como fogo-fátuo (luzes flutuando no pântano).
+        Seguir as luzes leva até ele.
+      - Olhar direto para ele por muito tempo CEGA temporariamente
+        (tela estourada de luz).
+      - Rastro de fogo: incendeia campos, plantações e bases de madeira.
+      - Protege os campos de quem queima a mata (liga com o Curupira).
+    Fraqueza .... Água / lama (apagar o corpo), Gelo.
+    Resistência . Fogo (imune), Sangramento.
+    Drop ........ "Olho de fogo" (ingrediente para munição incendiária /
+                  lanterna eterna).
+
+  CUCA - A bruxa-jacaré (NEGOCIADORA TRAIÇOEIRA)
+    Zona ........ Casebre no pântano (local fixo, difícil de achar)
+    Papel ....... NPC negociável - NÃO é inimiga por padrão
+    Mecânica:
+      - Vende poções, venenos, curas raras e "favores" mágicos que
+        nenhum outro mercador tem.
+      - TODA troca tem um custo escondido. Exemplos:
+          * a poção de cura também atrai monstros por 10 minutos;
+          * o veneno funciona, mas um animal da base adoece;
+          * cobra "um favor" depois (missão obrigatória - recusar a
+            transforma em inimiga);
+          * pede um NPC sobrevivente da base como pagamento.
+      - Medidor de reputação com a Cuca: quanto mais negócios, melhores
+        os itens... e piores as traições.
+      - Reputação muito baixa ou dívida não paga -> ela vira CHEFE de
+        pântano (prima brasileira da Bruxa dos Grimm).
+    Fraqueza (se virar inimiga) ... Fogo, Sagrado.
+    Resistência ................... Veneno, Perfuração (couro de jacaré).
+
+  IARA - A sereia dos rios
+    Zona ........ Rios, lagos, margens do pântano
+    Papel ....... Ameaça das travessias de água
+    Mecânica:
+      - Canto audível a distância. Quanto mais perto, mais a câmera e o
+        movimento do jogador são PUXADOS em direção à água.
+      - Se o jogador entrar na água, ela arrasta para o fundo
+        (afogamento).
+      - Também atrai animais (cavalo pode entrar no rio sozinho).
+      - Contramedida: "tampão de cera" craftável (bloqueia o canto, mas
+        o jogador fica surdo para outros sons - zumbis chegam sem aviso).
+    Fraqueza .... Fogo e dano fora da água (fica lenta em terra).
+    Resistência . Quase tudo enquanto está submersa.
+    Drop ........ Escamas (impermeabilizar equipamento), pérola rara.
+
+  SACI - O caos ambulante
+    Zona ........ Qualquer lugar (mais comum em áreas rurais e bases)
+    Papel ....... Trickster / ameaça de inventário
+    Mecânica:
+      - Invade bases em redemoinho e ROUBA ITENS dos baús (some com
+        eles ou espalha pelo mapa).
+      - Desamarra animais, apaga fogueiras, troca itens de lugar,
+        dá nó na crina do cavalo (cavalo fica lento até ser tratado).
+      - Aparece com redemoinho de vento -> sinal de aviso para o jogador.
+      - Não dá para matar com armas comuns.
+      - CAPTURA: jogar uma PENEIRA no redemoinho e prender numa GARRAFA
+        (itens craftáveis).
+      - Saci capturado: pode ser solto em troca dos itens roubados, ou
+        mantido como "pet" raro (avisa quando monstros se aproximam,
+        mas de vez em quando ainda apronta).
+      - Tirar o gorro vermelho = o Saci obedece por um tempo.
+    Fraqueza .... Peneira + garrafa, água corrente (não atravessa).
+    Resistência . Todo dano físico.
+
+  BICHO-PAPÃO - O sequestrador
+    Zona ........ Noite, perto de bases com NPCs sobreviventes
+    Papel ....... Ameaça aos NPCs + peça de lore
+    Mecânica:
+      - Nunca aparece direto: sombras, sussurros, portas rangendo.
+      - Sequestra NPCs sobreviventes da base (principalmente quando a
+        base está escura ou sem vigia).
+      - NPC sequestrado vai para um "covil" no mapa -> missão de resgate
+        com tempo limite. Se falhar, o NPC volta como monstro.
+      - Luz forte na base (gerador, fogueiras) afasta, mas luz atrai
+        hordas (seção 9) -> dilema.
+    Lore: as cartas e desenhos de crianças espalhados pelo mapa contam
+          que ele sempre esteve lá e ficou mais forte com a praga.
+    Fraqueza .... Luz forte (lanterna, sinalizador), Sagrado.
+    Resistência . Dano físico no escuro.
+
+
+11.2 LEVIATÃS - OS PRIMORDIAIS
+--------------------------------------------------------------------------------
+
+  Base: o Leviatã do Livro de Jó (domínio público) - "não há na terra
+  coisa que se lhe compare". NÃO usar elementos próprios da série
+  Supernatural (gosma preta, bórax, personagens, empresas etc.).
+
+  LORE:
+    O soro do Dr. West escorreu pelos rios até o mar e chegou ao abismo.
+    Lá dormiam os Leviatãs, criaturas mais antigas que as lendas e que
+    os próprios contos. A praga não os criou: ACORDOU.
+    São os "predadores do topo": caçam zumbis, monstros e sobreviventes.
+    Diários de pescadores e de um monge falam de "homens de escamas que
+    saem da maré e não morrem".
+
+  ZONA ........ Litoral, rios grandes, pântano profundo
+  FASE ........ Despertar (raros) -> Lenda (comuns) -> Noite Final
+  APARÊNCIA ... Humanoide alto, pele de escamas escuras, mandíbula que
+                se abre demais. Exala névoa salgada.
+
+  MECÂNICA PRINCIPAL - SÓ MORRE DECAPITADO:
+    - Regeneração total: qualquer dano (tiro, fogo, veneno, sangramento)
+      é curado em segundos. Vida zerada = cai "morto" e LEVANTA de novo.
+    - A única morte definitiva é CORTAR A CABEÇA.
+    - Como decapitar:
+        1. Causar dano até ele cair (estado "Caído", ~5 segundos).
+        2. Fazer a EXECUÇÃO com arma de lâmina pesada (machado, facão,
+           espada, foice) -> corta a cabeça.
+        3. Arma de fogo NÃO decapita (exceto calibre pesado/escopeta à
+           queima-roupa com o alvo Caído - custo alto de munição).
+    - Se ninguém executar no tempo, ele levanta com vida cheia e mais
+      agressivo (enfurecido).
+    - Isso força: trabalho em grupo (um derruba, outro executa) e manter
+      sempre uma lâmina pesada no inventário (peso!).
+
+  NOVA PROPRIEDADE DE ARMA: "DECAPITAÇÃO"
+    - Só lâminas pesadas têm. Melhorada na Forja (afiação).
+    - Também funciona em zumbis e outros monstros (morte instantânea
+      com o alvo caído), mas é ESSENCIAL só contra Leviatãs.
+
+  OUTROS COMPORTAMENTOS:
+    - Fome: devoram cadáveres de monstros e ficam maiores.
+    - Imitação: em Fase Lenda, alguns se disfarçam de sobrevivente NPC
+      perto de bases (a pele "falha" sob luz forte - pista para o
+      jogador).
+    - Água: dentro d'água são muito mais rápidos. Lutar em terra.
+    - Sal: a névoa salgada deles corrói armas de metal (durabilidade).
+
+  FRAQUEZA .... Decapitação (única morte real). Luz forte revela
+                disfarce. Fogo impede a regeneração por alguns segundos
+                (ajuda a derrubar).
+  RESISTÊNCIA . Todo o resto (regenera).
+  DROP ........ Cabeça de Leviatã (troféu / ingrediente raro),
+                escamas (armadura leve resistente), "sangue do abismo"
+                (alquimia - item da Cuca).
+
+  O GRANDE LEVIATÃ (CHEFE MUNDIAL)
+    - A besta original do abismo: uma serpente marinha gigante.
+    - Surge no litoral na NOITE FINAL (seção 5.4).
+    - Fases: destruir as escamas-armadura com explosivos -> derrubar ->
+      decapitação em grupo (QTE coletivo de vários jogadores cortando
+      ao mesmo tempo).
+    - Matar o Grande Leviatã é um dos objetivos globais da Noite Final
+      e dá troféu de temporada.
+
+
+================================================================================
+12. ANIMAIS
+================================================================================
+
+  Domesticáveis:
+  - Cavalo .... locomoção silenciosa, sem combustível.
+  - Cão ....... detecta monstros, rastreia.
+  - Galinha / vaca ... comida, couro, fertilizante.
+  - Cabra ..... leite, lã.
+
+  Ajudam no craft: couro, osso, gordura (tochas, sabão), pelos.
+
+  RISCO DE INFECÇÃO:
+  - Animal mordido e não tratado a tempo (antídoto ou bandagem limpa)
+    SE TRANSFORMA: cão-zumbi, vaca-ghoul, etc.
+  - CAVALO INFECTADO VIRA A MULA-SEM-CABEÇA (folclore BR):
+      * a cabeça some e no lugar fica um jato de fogo;
+      * galopa muito rápido, incendeia vegetação e estruturas de madeira;
+      * pode atacar a própria base de onde veio;
+      * fraquezas e mecânica na seção 11.
+  - Gera escolhas morais e tensão dentro da base.
+  - Animais selvagens também mutam com as Fases (lobos -> matilha
+    corrompida).
+
+
+================================================================================
+13. LOCOMOÇÃO E ESCALADA
+================================================================================
+
+  MEIO      VANTAGEM                                DESVANTAGEM
+  --------  --------------------------------------  ---------------------------
+  A pé      Silencioso                              Lento, gasta stamina
+  Cavalo    Silencioso, sem combustível, atravessa  Pode morrer / ser infectado
+            pântano
+  Moto      Rápida, ágil                            Barulhenta, pouca carga
+  Carro     Muita carga, protege                    Muito barulho, combustível,
+                                                    não entra no pântano
+
+  ESCALADA:
+  - Canos, escadas de incêndio, cordas com gancho (craftáveis), parkour
+    entre telhados.
+  - Telhados = rotas seguras contra zumbis (não escalam), mas NÃO contra
+    vampiros e lobisomens (escalam).
+  - Escalar consome muita stamina (melhorado pela árvore de habilidades).
+
+
+================================================================================
+14. PROGRESSÃO - HABILIDADES POR ATIVIDADE
+================================================================================
+
+  XP ganho fazendo a própria atividade (estilo Valheim / New World).
+  Com retornos decrescentes após ~70% (seção 8.F).
+
+  HABILIDADE        SOBE AO...                     BENEFÍCIOS
+  ----------------  -----------------------------  ------------------------------
+  Atletismo         Correr, nadar                  +stamina máx., regeneração
+  Escalada          Escalar                        -custo stamina, salto de telhado
+  Furtividade       Agachar perto de inimigos      -ruído, ataque furtivo letal
+                    sem ser visto
+  Corpo a corpo     Acertar com melee              Combos, -stamina por golpe
+  Armas de fogo     Atirar e acertar               -recuo, recarga rápida
+  Coleta            Cortar árvore, minerar         +recurso por coleta
+  Agricultura       Plantar, colher                Plantas medicinais, colheita
+                                                   dupla
+  Medicina          Craftar/usar cura              Bandagens melhores, curar
+                                                   infecção
+  Construção        Construir                      Estruturas mais resistentes
+  Montaria          Andar a cavalo                 -stamina do cavalo, velocidade
+  Caça a Lendas     Matar criaturas folclóricas    Revela fraquezas, munição de
+                                                   prata
+
+
+================================================================================
+15. VIDA, STAMINA E INVENTÁRIO COM PESO
+================================================================================
+
+  VIDA e STAMINA:
+  - A stamina máxima cai com fome, sede, peso carregado e ferimentos.
+  - Isso conecta todos os sistemas.
+
+  INVENTÁRIO:
+  - Grid com stack (estilo Minecraft) + peso total.
+  - Faixas de peso:
+      até 60%  ... normal
+      60-90%   ... lento, mais custo de stamina
+      acima 90% .. sem correr, sem escalar
+  - Mochilas, alforjes de cavalo e porta-malas aumentam a capacidade.
+  - Dilema clássico: "levo o loot ou deixo para escapar?"
+
+
+================================================================================
+16. MAPA E ZONAS DE LOOT
+================================================================================
+
+  ZONA                  RISCO           LOOT ESPECÍFICO
+  --------------------  --------------  ---------------------------------------
+  Residencial           Baixo-médio     Comida, remédios básicos, ferramentas.
+                                        PORÕES: loot melhor + monstro escondido.
+  Floresta              Médio           Madeira, caça, ervas. Wendigos à noite.
+  Pântano               Alto            Ervas raras (antídotos), ingredientes
+                                        alquímicos. Bruxas, afogados, neblina
+                                        tóxica.
+  Cidade / edifícios    Médio-alto      Eletrônicos, armas civis. Escalada
+                                        vertical, hordas grandes.
+  Hospital / lab.       Alto            Soro, antibióticos, lore do Dr. West.
+  Igreja / cemitério    Alto (noite)    Água benta, prata. Ghouls.
+  Base militar          Muito alto/PvP  Armas automáticas, colete, munição.
+
+
+================================================================================
+17. MERCADOR
+================================================================================
+
+  - NPC itinerante: aparece em locais diferentes a cada X dias.
+  - Moeda: escambo ou moeda própria ("dentes de monstro" / fichas).
+  - Variante folclórica: mercador estilo Rumpelstiltskin - vende itens
+    únicos e cobra em "favores" (ex.: sua próxima caçada) ou maldições
+    temporárias.
+  - Vende "kits de reconstrução" com desconto para quem perdeu a base
+    (seção 8.E).
+  - CUCA (pântano): negociadora traiçoeira com itens únicos e custos
+    escondidos. Ver seção 11.1.
+
+
+================================================================================
+18. CRAFTING
+================================================================================
+
+  Progressão por bancadas:
+  1. Mãos ................ bandagem improvisada, tocha, lança
+  2. Bancada de madeira .. arco, barricadas, ferramentas
+  3. Forja ............... armas melee de metal, BANHO DE PRATA (status)
+  4. Bancada de química .. antídoto, veneno de lâmina, molotov,
+                           bandagem estéril
+  5. Bancada de armas .... munição, reparo, modificações de armas de fogo
+
+  Algumas receitas só desbloqueiam com LORE (ler diários / páginas dos
+  contos). Receitas aprendidas ficam na conta entre temporadas.
+
+
+================================================================================
+19. AIRDROPS
+================================================================================
+
+  - Sinal visível para todos no mapa.
+  - O drop atrai hordas.
+  - Contém o melhor loot do jogo (tier sobe com a Fase da Praga).
+  - Ponto natural de conflito PvP (e cooperação no PvE).
+
+
+================================================================================
+20. RESUMO DO LOOP PRINCIPAL
+================================================================================
+
+          +--------------------------------------------+
+          v                                            |
+   EXPLORAR zonas  ->  SAQUEAR / CAÇAR  ->  VOLTAR À BASE
+   (risco ^ = loot ^)   (XP na atividade)        |
+          ^                                      v
+   ENFRENTAR Fase      <-  DEFENDER (horda/PvP) <- CRAFTAR / FORTIFICAR
+   mais perigosa                                   (desbloqueia zonas)
+          |
+          v
+   NOITE FINAL -> ranking -> wipe (ou corrupção regional no PvE)
+          -> nova temporada
+
+
+================================================================================
+21. PENDÊNCIAS / PRÓXIMOS PASSOS
+================================================================================
+
+  [ ] Fórmula do Nível de Ameaça (pesos de equipamento, base, abates)
+  [ ] Design detalhado do evento Noite Final (objetivos globais)
+  [ ] Lista completa de chefes (Grimm + folclore BR)
+  [ ] Fraquezas do Corpo-seco
+  [ ] Sistema de NPCs sobreviventes na base (necessário p/ Bicho-papão
+      e Cuca)
+  [ ] Lista de traições da Cuca e tabela de reputação
+  [ ] Itens folclóricos craftáveis (peneira, garrafa, oferenda,
+      tampão de cera)
+  [ ] Animação/tempo da execução (decapitação) e quais armas têm a
+      propriedade "Decapitação"
+  [ ] Design do Grande Leviatã (arena no litoral, fases)
+  [ ] Sistema de infecção do jogador (mordida, febre, cura)
+  [ ] Primeiro dia do jogador (onboarding)
+  [ ] Regras exatas de raid PvP (horários, Selo offline)
+  [ ] Lista de Talentos de Legado
+  [ ] Tamanho do mapa e divisão das regiões de corrupção
+
+================================================================================
+                              FIM DO ROTEIRO
+================================================================================

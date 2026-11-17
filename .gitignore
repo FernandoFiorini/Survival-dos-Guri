@@ -1,68 +1,35 @@
-# Prerequisites
-*.d
+# Unreal Engine - pastas geradas
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+.vscode/
+.idea/
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# Arquivos de solução/IDE gerados (recriados por "Generate Project Files")
+*.sln
+*.slnx
+*.suo
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+*.user
 
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
+# Build
 *.pdb
+*.ipch
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-*.so.*
+# Plugins: ignorar pastas geradas
+Plugins/**/Binaries/
+Plugins/**/Intermediate/
 
-# Fortran module files
-*.mod
-*.smod
+# Sistema
+Thumbs.db
+.DS_Store
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-# Build directories
-[Bb]uild/
-[Bb]uild-*/
-cmake-build-*/
-
-# CMake generated files
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-install_manifest.txt
-compile_commands.json
-
-# Temporary files
-*.tmp
+# Logs e temporários
 *.log
+*.tmp
 *.bak
-*.swp
-
-# vcpkg
-vcpkg_installed/
-
-# debug information files
-*.dwo
-
-# test output & cache
-Testing/
-.cache/
