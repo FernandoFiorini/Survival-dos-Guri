@@ -10,11 +10,22 @@
 #include "ShooterCharacter.h"
 #include "ShooterBulletCounterUI.h"
 #include "SurvivalDosGuri.h"
+#include "Survival/SurvivalHUDWidget.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 
 void AShooterPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// HUD de vida/stamina, só na tela do jogador local
+	if (IsLocalPlayerController())
+	{
+		SurvivalHUD = CreateWidget<USurvivalHUDWidget>(this, USurvivalHUDWidget::StaticClass());
+		if (SurvivalHUD)
+		{
+			SurvivalHUD->AddToPlayerScreen(0);
+		}
+	}
 }
 
 void AShooterPlayerController::SetupInputComponent()
@@ -101,6 +112,18 @@ void AShooterPlayerController::OnPossess(APawn* InPawn)
 
 void AShooterPlayerController::OnPawnDestroyed(AActor* DestroyedActor)
 {
+	// Só o servidor cria personagens
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	// O corpo de uma morte antiga sumiu, mas o jogador já renasceu em outro personagem: nada a fazer
+	if (GetPawn() && GetPawn() != DestroyedActor)
+	{
+		return;
+	}
+
 	// reset the bullet counter HUD
 	if (IsValid(BulletCounterUI))
 	{

@@ -81,6 +81,6 @@ void AShooterGameMode::IncrementTeamScore(uint8 TeamByte)
 
 bool AShooterGameMode::ShouldSpawnEnemyNPCs() const
 {
-	// only spawn enemy NPCs in single player mode
-	return NumberOfLocalPlayers < 2;
+	// only spawn enemy NPCs in single player mode, and only if enabled
+	return bSpawnEnemyNPCs && NumberOfLocalPlayers < 2;
 }

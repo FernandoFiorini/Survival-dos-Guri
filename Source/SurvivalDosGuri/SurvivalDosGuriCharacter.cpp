@@ -83,7 +83,9 @@ void ASurvivalDosGuriCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 		{
 			SurvivalCrouchAction = NewObject<UInputAction>(this, TEXT("SurvivalCrouchAction"));
 		}
+		
 		EnhancedInputComponent->BindAction(SurvivalCrouchAction, ETriggerEvent::Started, this, &ASurvivalDosGuriCharacter::DoCrouchToggle);
+		EnhancedInputComponent->BindAction(SurvivalCrouchAction, ETriggerEvent::Completed, this, &ASurvivalDosGuriCharacter::DoCrouchRelease);
 
 		// Sprinting
 		if (SurvivalSprintAction)
@@ -104,7 +106,6 @@ void ASurvivalDosGuriCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 		UE_LOG(LogSurvivalDosGuri, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
-
 
 void ASurvivalDosGuriCharacter::MoveInput(const FInputActionValue& Value)
 {
@@ -180,6 +181,22 @@ void ASurvivalDosGuriCharacter::DoSprintStart()
 void ASurvivalDosGuriCharacter::DoSprintEnd()
 {
 	SurvivalStats->SetSprinting(false);
+}
+
+void ASurvivalDosGuriCharacter::Landed(const FHitResult& Hit) 
+{
+	const float Velocidade = -GetVelocity().Z;
+	UE_LOG(LogTemp, Warning, TEXT("Queda: %.0f"), Velocidade);
+
+	if (!HasAuthority()) return;
+
+	const float fallDamageCalc = FMath::GetMappedRangeValueClamped(FVector2D(FallDamageMinSpeed, FallDamageLethalSpeed), FVector2D(0.f, FallDamageMax), Velocidade);
+
+	if(Velocidade >= FallDamageMinSpeed) {
+		UGameplayStatics::ApplyDamage(this, fallDamageCalc, GetController(), this, nullptr);
+	}
+
+	Super::Landed(Hit);
 }
 
 void ASurvivalDosGuriCharacter::PawnClientRestart()
@@ -279,6 +296,20 @@ void ASurvivalDosGuriCharacter::DoCrouchToggle()
 		SurvivalStats->SetSprinting(false);
 		Crouch();
 	}
+}
+
+void ASurvivalDosGuriCharacter::DoCrouchRelease()
+{
+	if (IsDead())
+	{
+		return;
+	}
+
+	if (bIsCrouched && bHoldToCrouch)
+	{
+		UnCrouch();
+	}
+	
 }
 
 bool ASurvivalDosGuriCharacter::CanJumpInternal_Implementation() const

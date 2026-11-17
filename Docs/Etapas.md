@@ -19,12 +19,14 @@ Tudo é feito já pensando em multiplayer (servidor manda, clientes recebem).
 - [ ] Inventário em grid com stack + peso total
 - [ ] Faixas de peso: até 60% normal / 60–90% lento / acima de 90% sem correr
 - [ ] Itens no chão para pegar (comida, água, bandagem)
+- [ ] Regen de vida só por efeitos de cura (bandagem, remédio...), nunca por padrão. Hoje o `SurvivalStatsComponent` regenera sozinho após `HealthRegenDelay` (foi só um teste de aprendizado): trocar por um efeito de cura temporário
 
 **Teste:** pegar itens, comer, beber, ficar pesado demais e não conseguir correr.
 
 ## Etapa 3 — Combate (roteiro §3.1, §11)
 - [ ] Melee silencioso que gasta stamina (faca, machado)
-- [ ] Arma de fogo com dano no sistema de vida novo (aproveitando a variante Shooter)
+- [x] Arma de fogo com dano no sistema de vida novo (personagem do Shooter usa o SurvivalStatsComponent, HUD e morte/renascer da Etapa 1; Lvl_Shooter é o mapa padrão)
+- [ ] Armas funcionando em rede (hoje o template do Shooter só funciona para o jogador que hospeda)
 - [ ] Barulho: tiros geram "ruído" que atrai inimigos
 - [ ] Dano localizado: cabeça / tronco / pernas
 

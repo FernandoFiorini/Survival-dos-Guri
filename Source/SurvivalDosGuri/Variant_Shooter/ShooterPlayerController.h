@@ -54,6 +54,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Shooter|Player")
 	FName PlayerPawnTag = FName("Player");
 
+	/** HUD de sobrevivência (barras de vida/stamina) */
+	UPROPERTY()
+	TObjectPtr<UUserWidget> SurvivalHUD;
+
 	/** Pointer to the bullet counter UI widget */
 	UPROPERTY()
 	TObjectPtr<UShooterBulletCounterUI> BulletCounterUI;

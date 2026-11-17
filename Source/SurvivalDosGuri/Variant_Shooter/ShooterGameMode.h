@@ -39,6 +39,10 @@ protected:
 	/** Used to assign players to different PlayerStarts in the level */
 	int32 CurrentPlayerStartAssignment = 0;
 
+	/** Se falso, os spawners nao criam bots inimigos (util para testar funcionalidades) */
+	UPROPERTY(EditAnywhere, Category="Shooter|Debug")
+	bool bSpawnEnemyNPCs = true;
+
 protected:
 
 	/** Gameplay initialization */

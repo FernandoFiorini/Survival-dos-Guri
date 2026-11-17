@@ -109,6 +109,10 @@ protected:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoCrouchToggle();
 
+	UPROPERTY(EditAnywhere, Category="Input")
+	bool bHoldToCrouch = true;
+	void DoCrouchRelease();
+
 	/** Stamina gasta a cada pulo */
 	UPROPERTY(EditAnywhere, Category="Survival", meta=(ClampMin=0))
 	float JumpStaminaCost = 10.f;
@@ -126,14 +130,24 @@ protected:
 	virtual bool CanJumpInternal_Implementation() const override;
 	virtual void OnJumped_Implementation() override;
 
+	// Caiu no chão (Usado para determinar dano de queda)
+	virtual void Landed(const FHitResult& Hit) override;
+
+	UPROPERTY(EditAnywhere, Category="Survival|Fall Damage", meta=(ClampMin=0))
+	float FallDamageMinSpeed = 800.f;     // a partir dessa velocidade começa o dano
+
+	UPROPERTY(EditAnywhere, Category="Survival|Fall Damage", meta=(ClampMin=0))
+	float FallDamageLethalSpeed = 1500.f;  // nessa velocidade o dano é máximo
+
+	UPROPERTY(EditAnywhere, Category="Survival|Fall Damage", meta=(ClampMin=0))
+	float FallDamageMax = 100.f;
+
 	/** Chamado no servidor e nos clientes quando a vida chega a 0 */
 	UFUNCTION()
-	void HandleDeath(AController* Killer);
+	virtual void HandleDeath(AController* Killer);
 
 	/** Servidor: cria um personagem novo para o jogador */
 	void Respawn();
-
-	bool IsDead() const;
 
 	FTimerHandle RespawnTimer;
 	FVector FirstPersonMeshBaseLocation = FVector::ZeroVector;
@@ -167,7 +181,6 @@ protected:
 	/** Set up input action bindings */
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	
-
 public:
 
 	/** Returns the first person mesh **/
@@ -175,6 +188,9 @@ public:
 
 	/** Returns first person camera component **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+
+	/** Está morto? (vida zerada no SurvivalStatsComponent) */
+	bool IsDead() const;
 
 	/** Returns the survival stats component **/
 	USurvivalStatsComponent* GetSurvivalStats() const { return SurvivalStats; }

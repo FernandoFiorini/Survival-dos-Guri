@@ -13,6 +13,7 @@
 #include "Camera/CameraComponent.h"
 #include "TimerManager.h"
 #include "ShooterGameMode.h"
+#include "Survival/SurvivalStatsComponent.h"
 
 AShooterCharacter::AShooterCharacter()
 {
@@ -27,19 +28,8 @@ void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// reset HP to max
-	CurrentHP = MaxHP;
-
 	// update the HUD
 	OnDamaged.Broadcast(1.0f);
-}
-
-void AShooterCharacter::EndPlay(EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-
-	// clear the respawn timer
-	GetWorld()->GetTimerManager().ClearTimer(RespawnTimer);
 }
 
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -63,24 +53,19 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 float AShooterCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	// ignore if already dead
-	if (CurrentHP <= 0.0f)
+	if (IsDead())
 	{
 		return 0.0f;
 	}
 
-	// Reduce HP
-	CurrentHP -= Damage;
+	// O dano vai para o SurvivalStatsComponent (via OnTakeAnyDamage da classe base).
+	// Se a vida zerar, o componente dispara OnDeath -> HandleDeath.
+	const float AppliedDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
-	// Have we depleted HP?
-	if (CurrentHP <= 0.0f)
-	{
-		Die();
-	}
+	// update the HUD do template (efeito de dano)
+	OnDamaged.Broadcast(FMath::Max(0.0f, GetSurvivalStats()->GetHealth() / GetSurvivalStats()->MaxHealth));
 
-	// update the HUD
-	OnDamaged.Broadcast(FMath::Max(0.0f, CurrentHP / MaxHP));
-
-	return Damage;
+	return AppliedDamage;
 }
 
 void AShooterCharacter::DoAim(float Yaw, float Pitch)
@@ -283,7 +268,7 @@ AShooterWeapon* AShooterCharacter::FindWeaponOfType(TSubclassOf<AShooterWeapon> 
 
 }
 
-void AShooterCharacter::Die()
+void AShooterCharacter::HandleDeath(AController* Killer)
 {
 	// deactivate the weapon
 	if (IsValid(CurrentWeapon))
@@ -291,24 +276,14 @@ void AShooterCharacter::Die()
 		CurrentWeapon->DeactivateWeapon();
 	}
 
-	// increment the team score
+	// increment the team score (só existe GameMode no servidor)
 	if (AShooterGameMode* GM = Cast<AShooterGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		GM->IncrementTeamScore(TeamByte);
 	}
 
-	// grant the death tag to the character
+	// grant the death tag to the character (os NPCs param de mirar nele)
 	Tags.Add(DeathTag);
-		
-	// stop character movement
-	GetCharacterMovement()->StopMovementImmediately();
-	GetCharacterMovement()->DisableMovement();
-
-	// disable collision
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	// disable controls
-	DisableInput(nullptr);
 
 	// reset the bullet counter UI
 	OnBulletCountUpdated.Broadcast(0, 0);
@@ -316,20 +291,8 @@ void AShooterCharacter::Die()
 	// call the BP handler
 	BP_OnDeath();
 
-	// schedule character respawn
-	GetWorld()->GetTimerManager().SetTimer(RespawnTimer, this, &AShooterCharacter::OnRespawn, RespawnTime, false);
-}
-
-void AShooterCharacter::OnRespawn()
-{
-	// destroy the character to force the PC to respawn
-	Destroy();
-}
-
-bool AShooterCharacter::IsDead() const
-{
-	// the character is dead if their current HP drops to zero
-	return CurrentHP <= 0.0f;
+	// classe base: para o movimento, ragdoll, câmera e agenda o renascer
+	Super::HandleDeath(Killer);
 }
 
 void AShooterCharacter::SetTeam(uint8 Team)

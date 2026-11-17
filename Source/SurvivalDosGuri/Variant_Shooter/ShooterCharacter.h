@@ -51,13 +51,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category ="Aim", meta = (ClampMin = 0, ClampMax = 100000, Units = "cm"))
 	float MaxAimDistance = 10000.0f;
 
-	/** Max HP this character can have */
-	UPROPERTY(EditAnywhere, Category="Health")
-	float MaxHP = 500.0f;
-
-	/** Current HP remaining to this character */
-	float CurrentHP = 0.0f;
-
 	/** Team ID for this character*/
 	UPROPERTY(EditAnywhere, Category="Team")
 	uint8 TeamByte = 0;
@@ -76,10 +69,6 @@ protected:
 	/** Weapon currently equipped and ready to shoot with */
 	TObjectPtr<AShooterWeapon> CurrentWeapon;
 
-	UPROPERTY(EditAnywhere, Category ="Destruction", meta = (ClampMin = 0, ClampMax = 10, Units = "s"))
-	float RespawnTime = 5.0f;
-
-	FTimerHandle RespawnTimer;
 
 public:
 
@@ -98,9 +87,6 @@ protected:
 
 	/** Gameplay initialization */
 	virtual void BeginPlay() override;
-
-	/** Gameplay cleanup */
-	virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
 
 	/** Set up input action bindings */
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
@@ -174,20 +160,14 @@ protected:
 	/** Returns true if the character already owns a weapon of the given class */
 	AShooterWeapon* FindWeaponOfType(TSubclassOf<AShooterWeapon> WeaponClass) const;
 
-	/** Called when this character's HP is depleted */
-	void Die();
+	/** Morte: desliga a arma, pontua o time e avisa o HUD. O ragdoll e o renascer vêm da classe base. */
+	virtual void HandleDeath(AController* Killer) override;
 
 	/** Called to allow Blueprint code to react to this character's death */
 	UFUNCTION(BlueprintImplementableEvent, Category="Shooter", meta = (DisplayName = "On Death"))
 	void BP_OnDeath();
 
-	/** Called from the respawn timer to destroy this character and force the PC to respawn */
-	void OnRespawn();
-
 public:
-
-	/** Returns true if the character is dead */
-	bool IsDead() const;
 
 	/** Sets the team ID for this character */
 	void SetTeam(uint8 Team);

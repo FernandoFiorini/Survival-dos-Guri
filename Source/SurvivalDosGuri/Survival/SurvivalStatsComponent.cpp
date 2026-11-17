@@ -67,6 +67,14 @@ void USurvivalStatsComponent::TickComponent(float DeltaTime, ELevelTick TickType
 		return;
 	}
 
+	TimeSinceDamage += DeltaTime;
+
+	if(Health < MaxHealth && TimeSinceDamage >= HealthRegenDelay)
+	{
+
+		SetHealth(Health + HealthRegenPerSecond * DeltaTime);
+	}
+
 	// Só gasta stamina correndo se estiver de fato se movendo
 	const bool bMoving = GetOwner()->GetVelocity().SizeSquared2D() > 25.f;
 
@@ -92,7 +100,18 @@ void USurvivalStatsComponent::TickComponent(float DeltaTime, ELevelTick TickType
 		TimeSinceStaminaUse += DeltaTime;
 		if (TimeSinceStaminaUse >= StaminaRegenDelay && Stamina < MaxStamina)
 		{
-			SetStamina(Stamina + StaminaRegenPerSecond * DeltaTime);
+			const ACharacter* Character = Cast<ACharacter>(GetOwner());
+			const bool personagemAgachado = Character && Character->bIsCrouched;
+
+			float RegenRate = StaminaRegenPerSecond;
+
+			if(personagemAgachado)
+			{
+				RegenRate *= StaminaRegenMultiplierWhenCrouched;
+
+			}
+
+			SetStamina(Stamina + RegenRate * DeltaTime);
 		}
 	}
 
@@ -172,6 +191,8 @@ void USurvivalStatsComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Da
 {
 	if (Damage > 0.f && !IsDead())
 	{
+		TimeSinceDamage = 0.f;
+
 		SetHealth(Health - Damage, InstigatedBy);
 	}
 }

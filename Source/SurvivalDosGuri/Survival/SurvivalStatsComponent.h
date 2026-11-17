@@ -28,6 +28,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Survival|Stamina", meta=(ClampMin=1))
 	float MaxStamina = 100.f;
 
+	/** Espera (s) após perder vida antes de começar a regenerar */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Survival|Health", meta=(ClampMin=0))
+	float HealthRegenDelay = 8.f;
+
+	/** Vida recuperada por segundo regen*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Survival|Health", meta=(ClampMin=0))
+	float HealthRegenPerSecond = 2.f;
+
 	/** Stamina gasta por segundo correndo */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Survival|Stamina", meta=(ClampMin=0))
 	float SprintDrainPerSecond = 20.f;
@@ -136,6 +144,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Survival|Stamina", meta=(ClampMin=1))
 	float SprintSpeedMultiplier = 1.3f;
 
+	/** Velocidade de recuperação de vigor quanto abaixado */
+	UPROPERTY(EditDefaultsOnly, Category="Survival|Stamina", meta=(ClampMin=1))
+	float StaminaRegenMultiplierWhenCrouched = 1.5f;
+
 	/** Sem stamina (esgotado): velocidade = velocidade normal * este fator */
 	UPROPERTY(EditDefaultsOnly, Category="Survival|Stamina", meta=(ClampMin=0.1, ClampMax=1))
 	float ExhaustedSpeedMultiplier = 0.6f;
@@ -143,4 +155,5 @@ protected:
 private:
 	float BaseWalkSpeed = 0.f;
 	float TimeSinceStaminaUse = 0.f;
+	float TimeSinceDamage = 0.f;
 };
